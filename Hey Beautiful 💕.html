@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A Little Question 💕</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#fff8f3;
+    --blush:#ffe1ea;
+    --lavender:#ece3fb;
+    --rose:#e0658c;
+    --rose-deep:#c94b73;
+    --ink:#5b4657;
+    --ink-soft:#8a7787;
+    --white:#ffffff;
+    --shadow: 0 10px 30px rgba(201,75,115,0.14);
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-sizing: border-box;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top: env(safe-area-inset-top, 0px); height:100%;}
+  body{
+    margin:0; height:100%; min-height:100dvh;
+    font-family:'Nunito', -apple-system, sans-serif;
+    background: radial-gradient(circle at 20% 10%, var(--blush) 0%, var(--cream) 45%, var(--lavender) 100%);
+    color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    overflow-x:hidden;
+    -webkit-text-size-adjust:100%;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  h1,h2,.headline{font-family:'Quicksand',sans-serif; font-weight:700;}
+  button{font-family:inherit; -webkit-tap-highlight-color: transparent; user-select:none; -webkit-user-select:none;}
+  #decor{position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index:0;}
+  .float-heart{position:absolute; font-size:1.2rem; opacity:.35; animation: drift linear infinite;}
+  @keyframes drift{
+    0%{transform:translateY(110vh) rotate(0deg); opacity:0;}
+    10%{opacity:.35;}
+    90%{opacity:.3;}
+    100%{transform:translateY(-10vh) rotate(25deg); opacity:0;}
+  }
+  #app{position:relative; z-index:1; width:100%; max-width:440px; padding:20px; min-height:100dvh; display:flex; flex-direction:column; justify-content:center;}
+  .card{
+    background:var(--white); border-radius:28px; padding:32px 24px 28px;
+    box-shadow:var(--shadow); text-align:center;
+    animation: pop .5s cubic-bezier(.2,.9,.3,1.3);
+  }
+  @keyframes pop{ from{opacity:0; transform:translateY(14px) scale(.97);} to{opacity:1; transform:none;} }
+  .step{ display:none; }
+  .step.active{ display:block; }
+  .progress{ display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:18px; font-size:.85rem; color:var(--ink-soft); }
+  .progress .dot{ width:9px; height:9px; border-radius:50%; background:var(--blush); transition:.3s; }
+  .progress .dot.done{ background:var(--rose); transform:scale(1.15); }
+  .progress .bar{ width:18px; height:2px; background:var(--blush); border-radius:2px; }
+  .progress .bar.done{ background:var(--rose); }
+
+  .eyebrow{ font-size:1.9rem; margin-bottom:4px; }
+  h1.title{ font-size:1.5rem; margin:0 0 10px; color:var(--rose-deep); }
+  p.msg{ font-size:1rem; line-height:1.5; color:var(--ink-soft); margin:0 0 22px; }
+  .ask{ font-size:1.15rem; font-weight:600; margin:0 0 24px; color:var(--ink); font-family:'Quicksand',sans-serif;}
+
+  .btn-row{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; position:relative; min-height:56px; }
+  .btn{
+    border:none; border-radius:999px; padding:14px 26px; font-size:1rem; font-weight:700;
+    min-height:48px; cursor:pointer; transition: transform .15s ease, box-shadow .15s ease;
+    touch-action: manipulation;
+  }
+  .btn:active{ transform:scale(.95); }
+  .btn-yes{ background:linear-gradient(135deg, var(--rose), var(--rose-deep)); color:#fff; box-shadow:0 8px 20px rgba(201,75,115,.35); }
+  .btn-yes:hover{ transform:translateY(-2px); }
+  .btn-no{
+    background:var(--cream); color:var(--ink-soft); border:2px solid var(--blush);
+    position:relative; transition: left .25s ease, top .25s ease, transform .15s ease;
+  }
+  .no-wrap{ position:relative; width:100%; height:56px; }
+  .btn-no.roaming{ position:absolute; }
+
+  .options{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
+  .opt{
+    background:var(--cream); border:2px solid transparent; border-radius:18px;
+    padding:16px 10px; font-size:.95rem; font-weight:600; color:var(--ink);
+    cursor:pointer; min-height:44px; transition:.15s;
+  }
+  .opt .e{ display:block; font-size:1.4rem; margin-bottom:4px; }
+  .opt.selected{ background:var(--blush); border-color:var(--rose); transform:translateY(-2px); box-shadow:0 6px 14px rgba(201,75,115,.2); }
+  .opt:active{ transform:scale(.96); }
+
+  .quick-row{ display:flex; flex-direction:column; gap:8px; margin:16px 0; }
+  .quick{
+    background:var(--lavender); border:2px solid transparent; border-radius:14px;
+    padding:12px; font-size:.92rem; font-weight:600; color:var(--ink); min-height:44px; cursor:pointer;
+  }
+  .quick.selected{ border-color:var(--rose); background:var(--blush); }
+
+  .field{ text-align:left; margin-bottom:14px; }
+  .field label{ display:block; font-size:.82rem; font-weight:600; color:var(--ink-soft); margin-bottom:6px; }
+  .field input{
+    width:100%; padding:13px 14px; border-radius:14px; border:2px solid var(--blush);
+    font-size:1rem; font-family:inherit; background:var(--cream); color:var(--ink);
+    min-height:44px; -webkit-appearance:none;
+  }
+  .field input:focus{ outline:none; border-color:var(--rose); }
+
+  .primary{
+    width:100%; background:linear-gradient(135deg, var(--rose), var(--rose-deep)); color:#fff;
+    border:none; border-radius:999px; padding:15px; font-size:1.02rem; font-weight:700;
+    min-height:48px; cursor:pointer; box-shadow:0 8px 20px rgba(201,75,115,.3);
+    transition: transform .15s, opacity .2s;
+  }
+  .primary:disabled{ opacity:.4; box-shadow:none; }
+  .primary:active:not(:disabled){ transform:scale(.97); }
+
+  .summary{ background:var(--cream); border-radius:16px; padding:16px; margin:18px 0; text-align:left; }
+  .summary-row{ display:flex; justify-content:space-between; padding:6px 0; font-size:.95rem; }
+  .summary-row span:first-child{ color:var(--ink-soft); }
+  .summary-row span:last-child{ font-weight:700; color:var(--rose-deep); }
+
+  .final-emoji{ font-size:2.6rem; margin-bottom:6px; }
+  #confetti-layer{ position:fixed; inset:0; pointer-events:none; z-index:5; }
+  .confetti-piece{ position:absolute; font-size:1.3rem; animation: fall 2.4s ease-in forwards; }
+  @keyframes fall{
+    0%{ transform:translateY(-10vh) rotate(0deg); opacity:1; }
+    100%{ transform:translateY(100vh) rotate(360deg); opacity:0; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .float-heart, .confetti-piece{ animation:none !important; display:none; }
+    .card{ animation:none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="decor"></div>
+<div id="confetti-layer"></div>
+
+<div id="app">
+
+  <!-- Progress indicator -->
+  <div class="progress" id="progress">
+    <span class="dot done" data-step="1">💗</span><span class="bar" data-bar="1"></span>
+    <span class="dot" data-step="2">2</span><span class="bar" data-bar="2"></span>
+    <span class="dot" data-step="3">3</span><span class="bar" data-bar="3"></span>
+    <span class="dot" data-step="4">4</span>
+  </div>
+
+  <!-- Step 1: The Invitation -->
+  <section class="step active" id="step1">
+    <div class="card">
+      <div class="eyebrow">💌</div>
+      <h1 class="title" id="s1-title">Hey Beautiful 💕</h1>
+      <p class="msg">I have a very important question for you...</p>
+      <p class="ask" id="s1-ask">Would you go on a date with me? 🥺💕</p>
+      <div class="btn-row">
+        <button class="btn btn-yes" id="yesBtn">Yes 💗</button>
+        <div class="no-wrap"><button class="btn btn-no" id="noBtn">No 🙈</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step 2: Choose Where -->
+  <section class="step" id="step2">
+    <div class="card">
+      <h1 class="title">Yay! 💕 Where should we go?</h1>
+      <div class="options" id="options"></div>
+      <button class="primary" id="toStep3" disabled>Next →</button>
+    </div>
+  </section>
+
+  <!-- Step 3: Choose Time -->
+  <section class="step" id="step3">
+    <div class="card">
+      <h1 class="title">Perfect choice 💕</h1>
+      <p class="msg">Now, when should I pick you up?</p>
+      <div class="quick-row" id="quickOptions"></div>
+      <div class="field">
+        <label for="dateInput">Pick a date</label>
+        <input type="date" id="dateInput">
+      </div>
+      <div class="field">
+        <label for="timeInput">Pick a time</label>
+        <input type="time" id="timeInput">
+      </div>
+      <button class="primary" id="confirmDate" disabled>Confirm Date 💕</button>
+    </div>
+  </section>
+
+  <!-- Step 4: Final Confirmation -->
+  <section class="step" id="step4">
+    <div class="card">
+      <div class="final-emoji">💕</div>
+      <h1 class="title">It's a date!</h1>
+      <div class="summary">
+        <div class="summary-row"><span>Where</span><span id="sumWhere"></span></div>
+        <div class="summary-row"><span>When</span><span id="sumWhen"></span></div>
+        <div class="summary-row"><span>Time</span><span id="sumTime"></span></div>
+      </div>
+      <p class="msg" id="finalMsg">Can't wait to spend some time with you ❤️</p>
+      <button class="primary" id="celebrateBtn">Yay! 💕</button>
+    </div>
+  </section>
+
+</div>
+
+<script>
+// ---- EASY CONFIGURATION: edit these to personalize ----
+const dateConfig = {
+  girlfriendName: "Beautiful",
+  boyfriendName: "Your Love",
+  invitationMessage: "Would you go on a date with me?",
+  destinations: [
+    { emoji:"🍽️", label:"Dinner" },
+    { emoji:"☕", label:"Coffee & Dessert" },
+    { emoji:"🎬", label:"Movie Date" },
+    { emoji:"🌆", label:"Night Walk" },
+    { emoji:"🎡", label:"Something Fun" },
+    { emoji:"💭", label:"You Choose" }
+  ],
+  quickTimes: ["Friday Night 🌙", "Saturday Evening ✨", "Sunday Afternoon ☀️"]
+};
+
+// Apply personalization to step 1 text
+document.getElementById('s1-title').textContent = `Hey ${dateConfig.girlfriendName} 💕`;
+document.getElementById('s1-ask').textContent = `${dateConfig.invitationMessage} 🥺💕`;
+
+// ---- App state ----
+const state = { destination:null, quickTime:null, date:null, time:null };
+
+// ---- Background floating hearts (decorative, lightweight) ----
+(function initDecor(){
+  const decor = document.getElementById('decor');
+  const emojis = ['💗','✨','🌸','💕'];
+  const count = window.innerWidth < 480 ? 8 : 12;
+  for(let i=0;i<count;i++){
+    const el = document.createElement('div');
+    el.className = 'float-heart';
+    el.textContent = emojis[i % emojis.length];
+    el.style.left = Math.random()*100 + 'vw';
+    el.style.animationDuration = (10 + Math.random()*8) + 's';
+    el.style.animationDelay = (Math.random()*10) + 's';
+    el.style.fontSize = (0.9 + Math.random()*0.9) + 'rem';
+    decor.appendChild(el);
+  }
+})();
+
+// ---- Step navigation ----
+function goToStep(n){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('step'+n).classList.add('active');
+  document.querySelectorAll('.progress .dot').forEach(d=>{
+    d.classList.toggle('done', Number(d.dataset.step) <= n);
+  });
+  document.querySelectorAll('.progress .bar').forEach(b=>{
+    b.classList.toggle('done', Number(b.dataset.bar) < n);
+  });
+  window.scrollTo(0,0);
+}
+
+// ---- Step 1: Yes/No interaction ----
+const noBtn = document.getElementById('noBtn');
+const noWrap = document.querySelector('.no-wrap');
+const noTexts = ["No 🙈","Are you sure? 🥺","Think again 😭","Really? 🙈","Give me a chance? 💕"];
+let noIndex = 0;
+
+function dodgeNoButton(){
+  // Move the No button to a random position within the card's bounds, keep it easy to still see/use
+  const wrapRect = noWrap.getBoundingClientRect();
+  const btnRect = noBtn.getBoundingClientRect();
+  const maxX = Math.max(wrapRect.width - btnRect.width, 0);
+  const maxY = Math.max(60, 0); // small vertical range so it stays in view
+  const randX = Math.random() * maxX;
+  const randY = (Math.random() - 0.5) * maxY;
+  noBtn.classList.add('roaming');
+  noBtn.style.left = randX + 'px';
+  noBtn.style.top = randY + 'px';
+  noIndex = (noIndex + 1) % noTexts.length;
+  noBtn.textContent = noTexts[noIndex];
+}
+// Trigger on hover (desktop) and touch/click attempt (mobile) — never disables the button
+noBtn.addEventListener('mouseenter', dodgeNoButton);
+noBtn.addEventListener('touchstart', (e)=>{ e.preventDefault(); dodgeNoButton(); }, {passive:false});
+noBtn.addEventListener('click', dodgeNoButton);
+
+document.getElementById('yesBtn').addEventListener('click', ()=>{
+  goToStep(2);
+});
+
+// ---- Step 2: Destination options ----
+const optionsWrap = document.getElementById('options');
+dateConfig.destinations.forEach(d=>{
+  const btn = document.createElement('button');
+  btn.className = 'opt';
+  btn.innerHTML = `<span class="e">${d.emoji}</span>${d.label}`;
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+    btn.classList.add('selected');
+    state.destination = d.label;
+    document.getElementById('toStep3').disabled = false;
+  });
+  optionsWrap.appendChild(btn);
+});
+document.getElementById('toStep3').addEventListener('click', ()=> goToStep(3));
+
+// ---- Step 3: Date & time ----
+const quickWrap = document.getElementById('quickOptions');
+const dateInput = document.getElementById('dateInput');
+const timeInput = document.getElementById('timeInput');
+const confirmBtn = document.getElementById('confirmDate');
+
+// set min date to today so past dates can't be picked
+const today = new Date();
+dateInput.min = today.toISOString().split('T')[0];
+
+dateConfig.quickTimes.forEach(label=>{
+  const btn = document.createElement('button');
+  btn.className = 'quick';
+  btn.textContent = label;
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.quick').forEach(q=>q.classList.remove('selected'));
+    btn.classList.add('selected');
+    state.quickTime = label;
+    checkStep3Ready();
+  });
+  quickWrap.appendChild(btn);
+});
+
+function checkStep3Ready(){
+  state.date = dateInput.value;
+  state.time = timeInput.value;
+  const ready = !!(state.date || state.quickTime) && (state.time || state.quickTime);
+  confirmBtn.disabled = !ready;
+}
+dateInput.addEventListener('change', ()=>{ state.quickTime = null; document.querySelectorAll('.quick').forEach(q=>q.classList.remove('selected')); checkStep3Ready(); });
+timeInput.addEventListener('change', checkStep3Ready);
+
+confirmBtn.addEventListener('click', ()=>{
+  const whereText = state.destination || "our date";
+  let whenText, timeText;
+  if(state.quickTime){
+    whenText = state.quickTime;
+    timeText = "Details to follow 💕";
+  } else {
+    const d = new Date(state.date + 'T00:00:00');
+    whenText = d.toLocaleDateString(undefined,{ weekday:'long', month:'long', day:'numeric' });
+    timeText = formatTime(state.time);
+  }
+  document.getElementById('sumWhere').textContent = whereText;
+  document.getElementById('sumWhen').textContent = whenText;
+  document.getElementById('sumTime').textContent = timeText;
+  goToStep(4);
+});
+
+function formatTime(t){
+  if(!t) return "A time we'll pick together";
+  const [h,m] = t.split(':').map(Number);
+  const period = h >= 12 ? 'PM' : 'AM';
+  const h12 = ((h % 12) || 12);
+  return `${h12}:${String(m).padStart(2,'0')} ${period}`;
+}
+
+// ---- Step 4: Celebration ----
+document.getElementById('celebrateBtn').addEventListener('click', ()=>{
+  launchConfetti();
+});
+
+function launchConfetti(){
+  const layer = document.getElementById('confetti-layer');
+  const pieces = ['💗','✨','🎉','💕','🌸'];
+  for(let i=0;i<26;i++){
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.textContent = pieces[Math.floor(Math.random()*pieces.length)];
+    p.style.left = Math.random()*100 + 'vw';
+    p.style.fontSize = (1 + Math.random()*1.1) + 'rem';
+    p.style.animationDelay = (Math.random()*0.4) + 's';
+    p.style.animationDuration = (1.8 + Math.random()*1.2) + 's';
+    layer.appendChild(p);
+    setTimeout(()=> p.remove(), 3200);
+  }
+}
+</script>
+</body>
+</html>
